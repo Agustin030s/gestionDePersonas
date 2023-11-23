@@ -131,19 +131,64 @@ class Persona{
             rasgoCaracteristico = 'No tiene rasgo caracteristico';
         }
 
-        alert(`<h2>La generación de ${this.#nombre} es ${generacion} y su rasgo caracteristico es: ${rasgoCaracteristico}</h2>`);
+        alert(`La generación de ${this.#nombre} es ${generacion} y su rasgo caracteristico es: ${rasgoCaracteristico}`);
     }
 
     esMayorDeEdad(){
         if(this.#edad >= 18){
-            alert(`<h2>${this.#nombre} es mayor de edad</h2>`);
+            alert(`${this.#nombre} es mayor de edad`);
         }else{
-            alert(`<h2>${this.#nombre} es menor de edad</h2>`);
+            alert(`${this.#nombre} es menor de edad`);
         }
     }
-
-    generarDni(){
-        const numDNI = Math.floor(Math.random() * 99999999) + 1;
-        return numDNI;
-    }
 }
+
+const listaDePersonas = [];
+const tablaPersonas = document.getElementById('bodyTabla');
+const formPersonas = document.getElementById('formPersonas');
+
+const agregarPersonaATabla = (persona) => {
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${persona.nombre}</td>
+        <td>${persona.edad}</td>
+        <td>${persona.dni}</td>
+        <td>${persona.obtenerFecha()}</td>
+        <td>${persona.peso} Kg</td>
+        <td>${persona.altura} mts</td>
+        <td>
+            <button class="btn btn-info my-2" onclick="mostrarGeneracion('${persona.dni}')">Mostrar Generación</button>
+            <button class="btn btn-info" onclick="esMayorDeEdad('${persona.dni}')">Es mayor de edad?</button>
+        </td>
+    `;
+    tablaPersonas.appendChild(newRow);
+}
+
+const mostrarGeneracion = (dni) =>{
+    const persona = listaDePersonas.find(p => p.dni === dni);
+    persona.mostrarGeneracion();
+}
+
+const esMayorDeEdad = (dni) =>{
+    const persona = listaDePersonas.find(p => p.dni === dni);
+    persona.esMayorDeEdad();
+}
+
+formPersonas.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const nombre = document.getElementById('nombre').value;
+    const edad = parseInt(document.getElementById('edad').value);
+    const dni = document.getElementById('dni').value;
+    const fechNac = new Date(document.getElementById('fechNac').value);
+    const peso = parseFloat(document.getElementById('peso').value);
+    const altura = parseFloat(document.getElementById('altura').value);
+
+    const nuevaPersona = new Persona(nombre, edad, dni, '', peso, altura, fechNac);
+    listaDePersonas.push(nuevaPersona);
+
+    agregarPersonaATabla(nuevaPersona);
+
+    // Limpiar los campos del formulario
+    formPersonas.reset();
+});
